@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="largeMargin">16dp</dimen>
+    <dimen name="textMedium">16sp</dimen>
+    <dimen name="serviceIconSize">40dp</dimen>
+    <dimen name="textSmall">14sp</dimen>
+</resources>

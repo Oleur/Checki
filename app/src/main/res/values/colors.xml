@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material colors -->
+    <color name="colorPrimary">#6accba</color>
+    <color name="colorPrimaryDark">#349b8a</color>
+    <color name="colorAccent">#448AFF</color>
+
+    <!-- Home color -->
+    <color name="colorText">#0E2C38</color>
+    <color name="colorSubText">#2f4e5a</color>
+    <color name="colorSection">#a0a0a0</color>
+    <color name="white">#ffffff</color>
+    <color name="divider">#e7e7e7</color>
+    <color name="silverGrey">#abacbe</color>
+</resources>

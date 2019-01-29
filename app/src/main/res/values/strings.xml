@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Checki</string>
+
+    <!-- Home strings -->
+    <string name="section_services">All Services</string>
+    <string name="text_ok">OK</string>
+    <string name="text_failed">FAILED</string>
+</resources>
