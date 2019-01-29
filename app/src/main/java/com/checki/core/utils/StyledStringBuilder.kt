@@ -16,6 +16,10 @@ class StyledStringBuilder : SpannableStringBuilder() {
         return appendStyled(text, StyleSpan(android.graphics.Typeface.BOLD))
     }
 
+    fun appendItalic(text: CharSequence): StyledStringBuilder {
+        return appendStyled(text, StyleSpan(android.graphics.Typeface.ITALIC))
+    }
+
     fun appendColor(text: CharSequence, color: Int): StyledStringBuilder {
         return appendStyled(text, ForegroundColorSpan(color))
     }

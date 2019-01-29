@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
  * View Model to keep a reference to the word repository and
  * an up-to-date list of all services.
  */
-class NetServiceViewModel(application: Application) : AndroidViewModel(application) {
+class NetServiceViewModel constructor(application: Application) : AndroidViewModel(application) {
 
     private var parentJob = Job()
     // By default all the coroutines launched in this scope should be using the Main dispatcher
@@ -44,6 +44,24 @@ class NetServiceViewModel(application: Application) : AndroidViewModel(applicati
      */
     fun insert(netService: NetService) = scope.launch(Dispatchers.IO) {
         repository.insert(netService)
+
+        val request = Request.Builder()
+            .url(netService.url)
+            .build()
+        try {
+            // Launch the okhttp request asynchronously
+            val response =  okHttpClient.newCall(request).await()
+
+            // Update the service with the new response code and check time
+            netService.status = response.code()
+            netService.lastCheckedAt = System.currentTimeMillis()
+
+            // Update the service in the database
+            repository.insert(netService)
+        } catch (ex: Exception) {
+            // Ignore cancel exception
+            ex.printStackTrace()
+        }
     }
 
     /**
@@ -69,7 +87,7 @@ class NetServiceViewModel(application: Application) : AndroidViewModel(applicati
 
                 // Update the service with the new response code and check time
                 it.status = response.code()
-                it.lastCheckedAt = checkTime
+                it.lastCheckedAt = checkTime * 1000L
 
                 // Update the service in the database
                 repository.insert(it)

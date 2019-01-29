@@ -49,10 +49,10 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 netService.lastCheckedAt, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS)
             holder.subtext.text = StyledStringBuilder().apply {
                 append("Status: ")
-                if (netService.status in 200..299) {
-                    appendColor(context.getString(R.string.text_ok), Color.GREEN)
-                } else {
-                    appendColor(context.getString(R.string.text_ok), Color.RED)
+                when(netService.status) {
+                    0 -> appendItalic(context.getString(R.string.text_pending))
+                    in 200..299 -> appendColor(context.getString(R.string.text_ok), Color.GREEN)
+                    else -> appendColor(context.getString(R.string.text_failed), Color.RED)
                 }
                 append(" (${netService.status})")
             }

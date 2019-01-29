@@ -19,7 +19,7 @@ abstract class CheckiDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     CheckiDatabase::class.java,
-                    "checki_database.db").build()
+                    "checki_database").build()
                 INSTANCE = instance
                 // return instance
                 instance
