@@ -1,4 +1,4 @@
-package com.checki.core.extensions
+package com.checki.core.ui
 
 import android.app.Activity
 import android.content.Context

@@ -34,6 +34,7 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
     // LiveData to be observed to notify the UI
     val allNetServices: LiveData<MutableList<NetService>>
 
+    // LiveData to observed to notify the change of network
     val onlineLiveData: MutableLiveData<Boolean>
 
     init {

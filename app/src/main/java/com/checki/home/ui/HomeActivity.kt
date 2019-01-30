@@ -12,17 +12,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.checki.R
 import com.checki.core.data.NetService
-import com.checki.core.extensions.bind
+import com.checki.core.ui.bind
 import com.checki.home.viewmodels.NetServiceViewModel
 import com.checki.home.viewmodels.TimerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+/**
+ * Activity that display all services stored in the database.
+ * Allow the user to add new ones or remove existing service directly in the list by swiping left.
+ */
 class HomeActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CODE_SERVICE = 2000
     }
 
+    // UI binding
     private val serviceContainer: RecyclerView by bind(R.id.service_container)
     private val toolbar: Toolbar by bind(R.id.toolbar)
     private val fab: FloatingActionButton by bind(R.id.fab)
@@ -101,12 +106,18 @@ class HomeActivity : AppCompatActivity() {
     //region Internal methods
 
     private fun subscribeTimer() {
-        val elapsedTimeObserver = Observer<Long> {
+        val checkTimeObserver = Observer<Long> {
             // Ping all services
             serviceViewModel.pingAllServices(it)
         }
 
-        timerViewModel.checkTime.observe(this, elapsedTimeObserver)
+        val timeObserver = Observer<Long> {
+            // Refresh the list to display the timestamp in real time
+            serviceAdapter.notifyDataSetChanged()
+        }
+
+        timerViewModel.liveDataCheckTime.observe(this, checkTimeObserver)
+        timerViewModel.liveDataTime.observe(this, timeObserver)
     }
 
     private fun subscribeServices() {

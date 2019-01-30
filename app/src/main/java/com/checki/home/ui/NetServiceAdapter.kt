@@ -8,8 +8,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.checki.R
 import com.checki.core.data.NetService
-import com.checki.core.extensions.bind
-import com.checki.core.extensions.inflate
+import com.checki.core.ui.bind
+import com.checki.core.ui.inflate
 import com.checki.core.utils.StyledStringBuilder
 
 class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -19,6 +19,7 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val TYPE_ITEM    = 2
     }
 
+    // List of services to display
     private var netServices = mutableListOf<NetService>()
 
     override fun getItemViewType(position: Int): Int {
@@ -79,12 +80,17 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyItemRemoved(position)
     }
 
+    //region ViewHolder classes
+
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val name: AppCompatTextView by itemView.bind(R.id.service_name)
         val subtext: AppCompatTextView by itemView.bind(R.id.service_subtext)
         val timestamp: AppCompatTextView by itemView.bind(R.id.service_timestamp)
+
     }
 
     class SectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    //endregion
 }
