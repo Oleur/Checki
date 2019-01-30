@@ -59,23 +59,7 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
 
         // Ping network only if we are connected
         if (getApplication<Application>().applicationContext.isOnline()) {
-            val request = Request.Builder()
-                .url(netService.url)
-                .build()
-            try {
-                // Launch the okhttp request asynchronously
-                val response =  okHttpClient.newCall(request).await()
-
-                // Update the service with the new response code and check time
-                netService.status = response.code()
-                netService.lastCheckedAt = System.currentTimeMillis()
-
-                // Update the service in the database
-                repository.insert(netService)
-            } catch (ex: Exception) {
-                // Ignore cancel exception
-                ex.printStackTrace()
-            }
+            pingService(netService, System.currentTimeMillis())
         }
 
         // TODO: Handle network changes to notify the user that services cannot be pinged
@@ -97,27 +81,36 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
         // Ping network only if we are connected
         if (getApplication<Application>().applicationContext.isOnline()) {
             allNetServices.value?.forEach {
-                val request = Request.Builder()
-                    .url(it.url)
-                    .build()
-                try {
-                    // Launch the okhttp request asynchronously
-                    val response =  okHttpClient.newCall(request).await()
-
-                    // Update the service with the new response code and check time
-                    it.status = response.code()
-                    it.lastCheckedAt = checkTime
-
-                    // Update the service in the database
-                    repository.insert(it)
-                } catch (ex: Exception) {
-                    // Ignore cancel exception
-                    ex.printStackTrace()
-                }
+                pingService(it, checkTime)
             }
         }
 
         // TODO: Handle network changes to notify the user that services cannot be pinged
+    }
+
+    //endregion
+
+    //region Internal methods
+
+    private suspend fun pingService(netService: NetService, checkTime: Long) {
+        val request = Request.Builder()
+            .url(netService.url)
+            .build()
+        try {
+            // Launch the okhttp request asynchronously
+            val response =  okHttpClient.newCall(request).await()
+
+            // Update the service with the new response code and check time
+            netService.status = response.code()
+            netService.lastCheckedAt = checkTime
+        } catch (ex: Exception) {
+            // Unknown Host save it as 404 status code
+            netService.status = 404
+            netService.lastCheckedAt = checkTime
+        } finally {
+            // Update the service in the database
+            repository.insert(netService)
+        }
     }
 
     //endregion

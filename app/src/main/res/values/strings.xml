@@ -1,15 +1,21 @@
 <resources>
     <string name="app_name">Checki</string>
 
+
     <!-- Home strings -->
     <string name="section_services">All Services</string>
     <string name="text_ok">OK</string>
     <string name="text_failed">FAILED</string>
     <string name="text_pending">PENDING</string>
+
+    <string name="error_failed_insert">Oops! Something went wrong :(</string>
+
+    <!-- Add service strings -->
+    <string name="label_add_service">Add new service</string>
     <string name="text_enter_service_name">Enter the service name</string>
     <string name="text_enter_service_url">Enter the service URL</string>
     <string name="text_validate">Validate</string>
     <string name="error_empty_text">Must not be empty</string>
     <string name="error_wrong_url_format">Wrong URL format!</string>
-    <string name="error_failed_insert">Oops! Something went wrong :(</string>
+
 </resources>

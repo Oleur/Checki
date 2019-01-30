@@ -20,9 +20,8 @@ class TimerViewModel : ViewModel() {
         get() = liveDataElapsedTime
 
     init {
+        // Update services every second
         val timer = Timer()
-
-        // Update the elapsed time every second.
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 liveDataElapsedTime.postValue(System.currentTimeMillis())

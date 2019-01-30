@@ -32,8 +32,8 @@ internal class NetServiceDividerItem(private val divider: Drawable) : RecyclerVi
             val itemViewType = adapter.getItemViewType(position)
 
             //Do not draw divider if next item is different from current one
-            if (position < adapter.itemCount - 1 && adapter.getItemViewType(position + 1)
-                            .javaClass.simpleName != itemViewType.javaClass.simpleName) {
+            if (position == 0 || (position < adapter.itemCount - 1 && adapter.getItemViewType(position + 1)
+                            .javaClass.simpleName != itemViewType.javaClass.simpleName)) {
                 continue
             }
 

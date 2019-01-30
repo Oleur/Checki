@@ -3,9 +3,12 @@ package com.checki.home.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.core.app.NavUtils
 import com.checki.R
 import com.checki.core.data.NetService
 import com.checki.core.extensions.bind
+import com.checki.core.extensions.showKeyboard
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import java.net.URL
@@ -28,6 +31,9 @@ class AddNetServiceActivity : AppCompatActivity() {
         // Setup action bar
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        // Show keyboard
+        nameInput.showKeyboard()
+
         // Add click listener to validate button
         validateBtn.setOnClickListener {
             if (checkInputValidity()) {
@@ -42,6 +48,17 @@ class AddNetServiceActivity : AppCompatActivity() {
                 supportFinishAfterTransition()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // Back to home activity
+                NavUtils.navigateUpFromSameTask(this)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     //region Internal methods
