@@ -42,6 +42,8 @@ class HomeActivity : AppCompatActivity() {
         NetServiceDividerItem(ResourcesCompat.getDrawable(resources, R.drawable.divider_service, theme)!!)
     }
 
+    private var pingAtLaunch = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scrolling)
@@ -123,7 +125,15 @@ class HomeActivity : AppCompatActivity() {
     private fun subscribeServices() {
         val servicesObserver = Observer<MutableList<NetService>> { servicesList ->
             // Update the adapter data
-            servicesList?.let { serviceAdapter.setServices(it) }
+            servicesList?.let {
+                serviceAdapter.setServices(it)
+
+                // Ping a launch
+                if (pingAtLaunch) {
+                    pingAtLaunch = false
+                    serviceViewModel.pingAllServices(System.currentTimeMillis())
+                }
+            }
         }
 
         serviceViewModel.allNetServices.observe(this, servicesObserver)
