@@ -11,7 +11,7 @@ import com.checki.core.data.NetServiceDao
 class NetServiceRepository(private val netServiceDao: NetServiceDao) {
 
     // Observed LiveData will notify the observer when the data has changed.
-    val allNetServices: LiveData<List<NetService>> = netServiceDao.getAll()
+    val allNetServices: LiveData<MutableList<NetService>> = netServiceDao.getAll()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

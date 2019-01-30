@@ -1,5 +1,7 @@
 package com.checki.core.network
 
+import android.content.Context
+import android.net.ConnectivityManager
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
@@ -35,4 +37,10 @@ suspend fun Call.await(): Response {
                 }
         }
     }
+}
+
+fun Context.isOnline(): Boolean {
+    val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val netInfo = cm.activeNetworkInfo
+    return netInfo?.isConnectedOrConnecting ?: false
 }

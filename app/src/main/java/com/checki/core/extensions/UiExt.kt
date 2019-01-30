@@ -3,10 +3,7 @@ package com.checki.core.extensions
 import android.app.Activity
 import android.content.Context
 import android.graphics.Point
-import android.graphics.drawable.Drawable
 import android.os.IBinder
-import androidx.fragment.app.Fragment
-import androidx.appcompat.content.res.AppCompatResources
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +11,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.annotation.*
+import androidx.annotation.DimenRes
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 
 /**
  * Created by juliensalvi on 08/11/17.

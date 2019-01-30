@@ -3,9 +3,11 @@ package com.checki.home.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.checki.core.data.CheckiDatabase
 import com.checki.core.data.NetService
 import com.checki.core.network.await
+import com.checki.core.network.isOnline
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -30,13 +32,23 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
     private val repository: NetServiceRepository
 
     // LiveData to be observed to notify the UI
-    val allNetServices: LiveData<List<NetService>>
+    val allNetServices: LiveData<MutableList<NetService>>
+
+    val onlineLiveData: MutableLiveData<Boolean>
 
     init {
         val checkiDao = CheckiDatabase.getDatabase(application).netServiceDao()
         repository = NetServiceRepository(checkiDao)
         allNetServices = repository.allNetServices
+        onlineLiveData = MutableLiveData()
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        parentJob.cancel()
+    }
+
+    //region Public methods
 
     /**
      * Insert or update a NetService in the database
@@ -45,31 +57,36 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
     fun insert(netService: NetService) = scope.launch(Dispatchers.IO) {
         repository.insert(netService)
 
-        val request = Request.Builder()
-            .url(netService.url)
-            .build()
-        try {
-            // Launch the okhttp request asynchronously
-            val response =  okHttpClient.newCall(request).await()
+        // Ping network only if we are connected
+        if (getApplication<Application>().applicationContext.isOnline()) {
+            val request = Request.Builder()
+                .url(netService.url)
+                .build()
+            try {
+                // Launch the okhttp request asynchronously
+                val response =  okHttpClient.newCall(request).await()
 
-            // Update the service with the new response code and check time
-            netService.status = response.code()
-            netService.lastCheckedAt = System.currentTimeMillis()
+                // Update the service with the new response code and check time
+                netService.status = response.code()
+                netService.lastCheckedAt = System.currentTimeMillis()
 
-            // Update the service in the database
-            repository.insert(netService)
-        } catch (ex: Exception) {
-            // Ignore cancel exception
-            ex.printStackTrace()
+                // Update the service in the database
+                repository.insert(netService)
+            } catch (ex: Exception) {
+                // Ignore cancel exception
+                ex.printStackTrace()
+            }
         }
+
+        // TODO: Handle network changes to notify the user that services cannot be pinged
     }
 
     /**
      * Delete a given NetService in the database
      * @param netService NetService to delete
      */
-    fun delete(netService: NetService) = scope.launch(Dispatchers.IO) {
-        repository.delete(netService)
+    fun delete(netService: NetService?) = scope.launch(Dispatchers.IO) {
+        netService?.let { repository.delete(netService) }
     }
 
     /**
@@ -77,29 +94,31 @@ class NetServiceViewModel constructor(application: Application) : AndroidViewMod
      * @param checkTime timestamp
      */
     fun pingAllServices(checkTime: Long) = scope.launch(Dispatchers.IO) {
-        allNetServices.value?.forEach {
-            val request = Request.Builder()
-                .url(it.url)
-                .build()
-            try {
-                // Launch the okhttp request asynchronously
-                val response =  okHttpClient.newCall(request).await()
+        // Ping network only if we are connected
+        if (getApplication<Application>().applicationContext.isOnline()) {
+            allNetServices.value?.forEach {
+                val request = Request.Builder()
+                    .url(it.url)
+                    .build()
+                try {
+                    // Launch the okhttp request asynchronously
+                    val response =  okHttpClient.newCall(request).await()
 
-                // Update the service with the new response code and check time
-                it.status = response.code()
-                it.lastCheckedAt = checkTime * 1000L
+                    // Update the service with the new response code and check time
+                    it.status = response.code()
+                    it.lastCheckedAt = checkTime
 
-                // Update the service in the database
-                repository.insert(it)
-            } catch (ex: Exception) {
-                // Ignore cancel exception
-                ex.printStackTrace()
+                    // Update the service in the database
+                    repository.insert(it)
+                } catch (ex: Exception) {
+                    // Ignore cancel exception
+                    ex.printStackTrace()
+                }
             }
         }
+
+        // TODO: Handle network changes to notify the user that services cannot be pinged
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        parentJob.cancel()
-    }
+    //endregion
 }

@@ -6,7 +6,7 @@ import androidx.room.*
 @Dao
 interface NetServiceDao {
     @Query("SELECT * FROM netservice ORDER BY last_checked_at DESC")
-    fun getAll(): LiveData<List<NetService>>
+    fun getAll(): LiveData<MutableList<NetService>>
 
     @Query("SELECT * FROM netservice WHERE name LIKE :nameToFind LIMIT 1")
     fun findByName(nameToFind: String): NetService

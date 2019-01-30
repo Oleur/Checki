@@ -1,7 +1,6 @@
 package com.checki.home.viewmodels
 
 import androidx.lifecycle.LiveData
-import android.os.SystemClock
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.util.*
@@ -17,9 +16,7 @@ class TimerViewModel : ViewModel() {
 
     private val liveDataElapsedTime = MutableLiveData<Long>()
 
-    private val mInitialTime: Long = SystemClock.elapsedRealtime()
-
-    val elapsedTime: LiveData<Long>
+    val checkTime: LiveData<Long>
         get() = liveDataElapsedTime
 
     init {
@@ -28,8 +25,7 @@ class TimerViewModel : ViewModel() {
         // Update the elapsed time every second.
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                val newValue = (SystemClock.elapsedRealtime() - mInitialTime) / 1000L
-                liveDataElapsedTime.postValue(newValue)
+                liveDataElapsedTime.postValue(System.currentTimeMillis())
             }
         }, ONE_MINUTE, ONE_MINUTE)
     }

@@ -8,6 +8,8 @@ import com.checki.core.data.NetService
 import com.checki.core.extensions.bind
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import java.net.URL
+
 
 class AddNetServiceActivity : AppCompatActivity() {
 
@@ -46,13 +48,24 @@ class AddNetServiceActivity : AppCompatActivity() {
 
     private fun checkInputValidity(): Boolean {
         var check = true
+
+        // name input must not be null or empty
         if (nameInput.text.isNullOrBlank()) {
             nameInput.error = getString(R.string.error_empty_text)
             check = false
         }
 
+        // URL input must not be null or empty
         if (urlInput.text.isNullOrBlank()) {
             urlInput.error = getString(R.string.error_empty_text)
+            check = false
+        }
+
+        // Check if the url is well formatted
+        try {
+            URL(urlInput.text.toString()).toURI()
+        } catch (e: Exception) {
+            urlInput.error = getString(R.string.error_wrong_url_format)
             check = false
         }
 

@@ -10,5 +10,6 @@
     <string name="text_enter_service_url">Enter the service URL</string>
     <string name="text_validate">Validate</string>
     <string name="error_empty_text">Must not be empty</string>
+    <string name="error_wrong_url_format">Wrong URL format!</string>
     <string name="error_failed_insert">Oops! Something went wrong :(</string>
 </resources>

@@ -19,7 +19,7 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val TYPE_ITEM    = 2
     }
 
-    private var netServices = emptyList<NetService>()
+    private var netServices = mutableListOf<NetService>()
 
     override fun getItemViewType(position: Int): Int {
         return when(position) {
@@ -46,7 +46,7 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder as ServiceViewHolder
             holder.name.text = netService.name
             holder.timestamp.text = DateUtils.getRelativeTimeSpanString(
-                netService.lastCheckedAt, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS)
+                netService.lastCheckedAt, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS)
             holder.subtext.text = StyledStringBuilder().apply {
                 append("Status: ")
                 when(netService.status) {
@@ -59,9 +59,24 @@ class NetServiceAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun setServices(services: List<NetService>) {
+    //region Public methods
+
+    /**
+     * Add new services to data list
+     * @param services New services
+     */
+    fun setServices(services: MutableList<NetService>) {
         netServices = services
         notifyDataSetChanged()
+    }
+
+    /**
+     * Delete a service from the data list
+     * @param position Position of the item in the adapter
+     */
+    fun deleteService(position: Int) {
+        netServices.removeAt(position - 1)
+        notifyItemRemoved(position)
     }
 
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -7,12 +7,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.checki.R
 import com.checki.core.data.NetService
 import com.checki.core.extensions.bind
-import com.checki.core.extensions.makeLongToast
 import com.checki.home.viewmodels.NetServiceViewModel
 import com.checki.home.viewmodels.TimerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,6 +48,22 @@ class HomeActivity : AppCompatActivity() {
         serviceContainer.layoutManager = LinearLayoutManager(applicationContext)
         serviceContainer.adapter = serviceAdapter
         serviceContainer.addItemDecoration(dividerItemDecoration)
+
+        // Add Swipe to delete to the recyclerview
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.adapterPosition
+                val netServiceToDelete = serviceViewModel.allNetServices.value?.get(pos - 1)
+
+                // Remove service from the recyclerview
+                serviceAdapter.deleteService(pos)
+
+                // Delete service in database
+                serviceViewModel.delete(netServiceToDelete)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(serviceContainer)
 
         // Attach ViewModels to the activity life cycle
         serviceViewModel = ViewModelProviders.of(this).get(NetServiceViewModel(application)::class.java)
@@ -90,11 +106,11 @@ class HomeActivity : AppCompatActivity() {
             serviceViewModel.pingAllServices(it)
         }
 
-        timerViewModel.elapsedTime.observe(this, elapsedTimeObserver)
+        timerViewModel.checkTime.observe(this, elapsedTimeObserver)
     }
 
     private fun subscribeServices() {
-        val servicesObserver = Observer<List<NetService>> { servicesList ->
+        val servicesObserver = Observer<MutableList<NetService>> { servicesList ->
             // Update the adapter data
             servicesList?.let { serviceAdapter.setServices(it) }
         }
